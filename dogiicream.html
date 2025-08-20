@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogi Teknik Destek</title>
+    <!-- Google Fonts: Poppins for a modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to override or extend Tailwind for specific elements */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8F0F7; /* Açık pembe tonu */
+        }
+        .container {
+            background-color: #FFFFFF;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            width: 120px; /* Logoyu küçült */
+        }
+        h1, h2 {
+            color: #FF69B4; /* Canlı pembe */
+        }
+        .chat-container {
+            border: 2px solid #FFC0CB; /* Açık pembe kenarlık */
+        }
+        .chat-input-area {
+            border-top: 2px solid #FFC0CB;
+        }
+        .user-message {
+            background-color: #FFC0CB; /* Kullanıcı mesajları için açık pembe */
+        }
+        .ai-message {
+            background-color: #E0F7FA; /* AI mesajları için açık mavi/turkuaz */
+        }
+        .send-button {
+            background-color: #FF69B4; /* Gönder butonu için canlı pembe */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .send-button:hover {
+            background-color: #C2185B; /* Daha koyu pembe */
+            transform: translateY(-2px);
+        }
+        .api-key-input {
+            border: 1px solid #FFC0CB;
+            background-color: #FFF0F5;
+        }
+        .start-chat-button {
+            background-color: #4CAF50; /* Sohbeti başlat butonu için yeşil */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .start-chat-button:hover {
+            background-color: #388E3C;
+            transform: translateY(-2px);
+        }
+        .loading-indicator {
+            color: #FF69B4;
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen m-0 p-4">
+    <div class="container rounded-3xl p-8 w-full max-w-3xl text-center relative">
+        <header class="mb-8 flex flex-col items-center">
+            <!-- Dogi Soft Ice Cream Logo - Updated Link -->
+            <img src="https://dogisofticecream.com.tr/wp-content/uploads/2025/02/dogilogo.png" alt="Dogi Soft Ice Cream Logo" class="logo mb-4">
+            <h1 class="text-3xl font-bold">Dogi Teknik Destek Asistanı</h1>
+            <p class="text-gray-600 mt-2">Makine sorunlarınız için sınırsız teknik destek.</p>
+        </header>
+
+        <section id="api-key-section" class="mb-8 p-6 rounded-xl bg-pink-50">
+            <h2 class="text-xl font-bold mb-4">Gemini API Anahtarınızı Girin</h2>
+            <input type="password" id="apiKeyInput" placeholder="API Anahtarınızı Buraya Girin" class="api-key-input w-full p-3 rounded-lg mb-4 text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300">
+            <button id="startChatButton" class="start-chat-button text-white px-8 py-3 rounded-full text-lg font-bold">Sohbeti Başlat</button>
+            <p class="text-sm text-gray-500 mt-3">API anahtarınız sadece tarayıcınızda yerel olarak kullanılır ve sunucularımıza gönderilmez.</p>
+        </section>
+
+        <section id="chat-section" class="hidden">
+            <div class="chat-container h-96 overflow-y-auto p-4 rounded-xl mb-4 flex flex-col items-start text-left">
+                <!-- Chat messages will be appended here -->
+                <div class="ai-message p-3 rounded-lg max-w-3/4 mb-2 text-gray-800">
+                    Dogi Teknik Destek Sistemi aktif. Tüm limitler kaldırıldı. Lütfen makinenin yaşadığı sorunu tüm detaylarıyla anlatın. Çözüm için hazırım.
+                </div>
+            </div>
+            <div class="chat-input-area flex p-4">
+                <input type="text" id="chatInput" placeholder="Sorununuzu buraya yazın..." class="flex-grow p-3 rounded-l-lg border-2 border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400">
+                <button id="sendButton" class="send-button text-white px-6 py-3 rounded-r-lg font-bold">Gönder</button>
+            </div>
+            <div id="loadingIndicator" class="loading-indicator mt-4 text-lg font-bold hidden">Yükleniyor...</div>
+        </section>
+
+        <!-- Message Box for general alerts -->
+        <div class="message-box fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-8 rounded-2xl text-center z-50 hidden" id="messageBox">
+            <p class="text-2xl text-gray-800 mb-5 font-bold" id="messageText"></p>
+            <button class="close-message text-white px-6 py-3 rounded-full cursor-pointer text-lg" id="closeMessage">Kapat</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const startChatButton = document.getElementById('startChatButton');
+            const apiKeySection = document.getElementById('api-key-section');
+            const chatSection = document.getElementById('chat-section');
+            const chatContainer = document.querySelector('.chat-container');
+            const chatInput = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            const closeMessageButton = document.getElementById('closeMessage');
+
+            let chatHistory = [{
+                role: "model",
+                parts: [{ text: "Dogi Teknik Destek Sistemi aktif. Tüm limitler kaldırıldı. Lütfen makinenin yaşadığı sorunu tüm detaylarıyla anlatın. Çözüm için hazırım." }]
+            }];
+            let API_KEY = "";
+
+            // Function to display messages in the message box
+            function showMessage(msg) {
+                messageText.innerHTML = msg;
+                messageBox.classList.add('show');
+            }
+
+            // Close message box event listener
+            closeMessageButton.addEventListener('click', () => {
+                messageBox.classList.remove('show');
+            });
+
+            // Start chat button click handler
+            startChatButton.addEventListener('click', () => {
+                const enteredKey = apiKeyInput.value.trim();
+                if (enteredKey) {
+                    API_KEY = enteredKey;
+                    apiKeySection.classList.add('hidden');
+                    chatSection.classList.remove('hidden');
+                    // Scroll to bottom of chat
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                } else {
+                    showMessage("Lütfen geçerli bir API anahtarı girin.");
+                }
+            });
+
+            // Send message function
+            async function sendMessage() {
+                const userMessage = chatInput.value.trim();
+                if (userMessage === "") return;
+
+                // Display user message
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.classList.add('user-message', 'p-3', 'rounded-lg', 'max-w-3/4', 'mb-2', 'ml-auto', 'text-white');
+                userMessageDiv.textContent = userMessage;
+                chatContainer.appendChild(userMessageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+                chatInput.value = "";
+                loadingIndicator.classList.remove('hidden'); // Show loading indicator
+
+                try {
+                    const payload = {
+                        contents: chatHistory,
+                        generationConfig: {
+                            // Apply the specific prompt as a system instruction or initial context if needed
+                            // For this setup, the "Dogi Soft Ice Cream Technician" persona is implicitly handled by the prompt.
+                            // If Gemini allowed direct system instructions, it would go here.
+                            // Since not all Gemini models support system instructions directly in generateContent,
+                            // we rely on the initial prompt given to the model to establish its persona.
+                        }
+                    };
+
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API hatası: ${errorData.error.message || response.statusText}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const aiResponse = result.candidates[0].content.parts[0].text;
+
+                        // Display AI message
+                        const aiMessageDiv = document.createElement('div');
+                        aiMessageDiv.classList.add('ai-message', 'p-3', 'rounded-lg', 'max-w-3/4', 'mb-2', 'text-gray-800');
+                        aiMessageDiv.innerHTML = aiResponse; // Use innerHTML to render potential Markdown
+                        chatContainer.appendChild(aiMessageDiv);
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                        chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                    } else {
+                        showMessage("AI'dan beklenen yanıt alınamadı. Lütfen tekrar deneyin.");
+                        console.error("AI'dan beklenen yanıt alınamadı:", result);
+                    }
+                } catch (error) {
+                    console.error("Sohbet sırasında bir hata oluştu:", error);
+                    showMessage(`Sohbet sırasında bir hata oluştu: ${error.message}. Lütfen API anahtarınızı kontrol edin veya daha sonra tekrar deneyin.`);
+                } finally {
+                    loadingIndicator.classList.add('hidden'); // Hide loading indicator
+                }
+            }
+
+            // Send message on button click
+            sendButton.addEventListener('click', sendMessage);
+
+            // Send message on Enter key press
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

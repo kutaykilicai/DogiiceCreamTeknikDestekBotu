@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogi Teknik Destek - Doğuş Otomat</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo-container {
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(196, 69, 105, 0.3);
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+        }
+        
+        .chat-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            margin-left: auto;
+        }
+        
+        .ai-message {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .input-field {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .7; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="flex justify-center items-center min-h-screen p-4">
+    <!-- Floating Particles Background -->
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; width: 20px; height: 20px; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; width: 15px; height: 15px; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 35%; width: 25px; height: 25px; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 50%; width: 18px; height: 18px; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 65%; width: 22px; height: 22px; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 80%; width: 16px; height: 16px; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 90%; width: 24px; height: 24px; animation-delay: 6s;"></div>
+    </div>
+
+    <div class="glass-effect rounded-3xl p-8 w-full max-w-4xl shadow-2xl fade-in">
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <div class="logo-container inline-block">
+                <img src="https://dogisofticecream.com.tr/wp-content/uploads/2025/02/dogilogo.png" 
+                     alt="Dogi Soft Ice Cream Logo" 
+                     class="w-32 h-auto mx-auto">
+            </div>
+            <h1 class="text-4xl font-bold text-gray-800 mb-3">
+                Dogi Teknik Destek Merkezi
+            </h1>
+            <p class="text-lg text-gray-600 mb-2">Doğuş Otomat Profesyonel Çözümler</p>
+            <p class="text-sm text-gray-500">Soft Ice Cream Makinaları için 7/24 AI Destekli Teknik Servis</p>
+        </header>
+
+        <!-- Features Section -->
+        <div class="grid md:grid-cols-3 gap-6 mb-8" id="features-section">
+            <div class="feature-card p-6 rounded-xl text-center">
+                <div class="text-3xl mb-3">🔧</div>
+                <h3 class="font-semibold text-gray-800 mb-2">Anında Çözüm</h3>
+                <p class="text-sm text-gray-600">Makine sorunlarınız için hızlı ve etkili çözümler</p>
+            </div>
+            <div class="feature-card p-6 rounded-xl text-center">
+                <div class="text-3xl mb-3">📱</div>
+                <h3 class="font-semibold text-gray-800 mb-2">7/24 Destek</h3>
+                <p class="text-sm text-gray-600">Gece gündüz kesintisiz teknik destek hizmeti</p>
+            </div>
+            <div class="feature-card p-6 rounded-xl text-center">
+                <div class="text-3xl mb-3">🎯</div>
+                <h3 class="font-semibold text-gray-800 mb-2">Uzman Sistem</h3>
+                <p class="text-sm text-gray-600">Dogi makinaları için özel eğitilmiş AI asistan</p>
+            </div>
+        </div>
+
+        <!-- API Key Section -->
+        <section id="api-key-section" class="mb-8">
+            <div class="glass-effect rounded-2xl p-8 text-center">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-3">
+                        🔐 Güvenli Giriş
+                    </h2>
+                    <p class="text-gray-600 mb-6">
+                        Teknik destek hizmetimizi kullanmak için Google Gemini API anahtarınızı girin.
+                        <br><span class="text-sm text-gray-500">API anahtarınız yalnızca tarayıcınızda saklanır ve güvenliğiniz için şifrelenir.</span>
+                    </p>
+                </div>
+                
+                <div class="max-w-md mx-auto">
+                    <div class="relative mb-4">
+                        <input type="password" 
+                               id="apiKeyInput" 
+                               placeholder="Google Gemini API Anahtarını Girin..." 
+                               class="input-field w-full p-4 rounded-xl text-gray-800 focus:outline-none text-center font-mono">
+                        <button type="button" 
+                                id="togglePassword" 
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
+                    
+                    <button id="startChatButton" 
+                            class="btn-success text-white px-8 py-4 rounded-xl text-lg font-semibold w-full mb-4">
+                        🚀 Teknik Desteği Başlat
+                    </button>
+                    
+                    <div class="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
+                        <p><strong>API Anahtarı nasıl alınır?</strong></p>
+                        <p>1. <a href="https://makersuite.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a> sayfasına gidin</p>
+                        <p>2. "Create API Key" butonuna tıklayın</p>
+                        <p>3. Oluşturulan anahtarı kopyalayıp buraya yapıştırın</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Section -->
+        <section id="chat-section" class="hidden">
+            <div class="mb-6 text-center">
+                <div class="inline-flex items-center bg-green-100 px-4 py-2 rounded-full">
+                    <div class="w-3 h-3 bg-green-500 rounded-full mr-2 pulse"></div>
+                    <span class="text-green-700 font-medium">Sistem Aktif - Teknik Destek Hazır</span>
+                </div>
+            </div>
+            
+            <div class="chat-container rounded-2xl p-6 h-96 overflow-y-auto mb-4 scroll-smooth">
+                <div class="ai-message p-4 rounded-2xl max-w-4xl mb-4 shadow-sm">
+                    🤖 <strong>Dogi Teknik Destek Sistemi Aktif!</strong><br><br>
+                    Merhaba! Ben Dogi Soft Ice Cream makinalarınız için özel eğitilmiş teknik destek asistanınızım. 
+                    <br><br>
+                    📋 <strong>Size nasıl yardımcı olabilirim:</strong><br>
+                    • Makine arızalarının teşhisi ve çözümü<br>
+                    • Hata kodlarının anlamları ve çözümleri (E01-E10)<br>
+                    • Bakım ve temizlik talimatları<br>
+                    • Parça değişimi rehberleri<br>
+                    • Performans optimizasyonu<br>
+                    • Sorun giderme adımları<br>
+                    <br>
+                    🔧 <strong>Yaygın Hata Kodları:</strong> 00 (Reçel), 01 (Dondurma), 02 (Sistem), 03 (Oluşum), 05-07 (Kapak Motor), 08-11 (Y Motor), 12-15 (X Motor), 16-19 (Bardak), 20-21 (Kapı), 26-29 (Z Motor), 30-31 (Reçel Motor), 37-39 (Robot), 40-42 (Kilit), 240 (Memory)<br>
+                    <br>
+                    Lütfen makinenizde yaşadığınız sorunu, hata kodunu veya modeli detaylı olarak açıklayın! 🚀
+                </div>
+            </div>
+            
+            <div class="flex gap-3 p-4 glass-effect rounded-2xl">
+                <input type="text" 
+                       id="chatInput" 
+                       placeholder="Hata kodunuzu yazın (00-42, 240) veya sorununuzu açıklayın..." 
+                       class="input-field flex-grow p-4 rounded-xl focus:outline-none">
+                <button id="sendButton" 
+                        class="btn-primary text-white px-6 py-4 rounded-xl font-semibold whitespace-nowrap">
+                    📤 Gönder
+                </button>
+            </div>
+            
+            <div id="loadingIndicator" class="text-center mt-4 hidden">
+                <div class="inline-flex items-center">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-3"></div>
+                    <span class="text-blue-600 font-medium">Analiz ediliyor ve çözüm üretiliyor...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Message Modal -->
+        <div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="glass-effect rounded-2xl p-8 max-w-md w-full mx-4 text-center">
+                <div id="modalIcon" class="text-4xl mb-4">⚠️</div>
+                <p id="modalMessage" class="text-gray-800 mb-6 font-medium"></p>
+                <button id="closeModal" class="btn-primary text-white px-6 py-3 rounded-xl font-semibold">
+                    Tamam
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-8 pt-6 border-t border-gray-200">
+            <p class="text-sm text-gray-500">
+                © 2025 Doğuş Otomat - Dogi Soft Ice Cream Teknik Destek Merkezi
+                <br>
+                <span class="text-xs">Powered by Google Gemini AI • Güvenli ve Hızlı Çözümler</span>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const startChatButton = document.getElementById('startChatButton');
+            const apiKeySection = document.getElementById('api-key-section');
+            const chatSection = document.getElementById('chat-section');
+            const featuresSection = document.getElementById('features-section');
+            const chatContainer = document.querySelector('.chat-container');
+            const chatInput = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const messageModal = document.getElementById('messageModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalIcon = document.getElementById('modalIcon');
+            const closeModalBtn = document.getElementById('closeModal');
+
+            let chatHistory = [{
+                role: "model",
+                parts: [{ text: `Sen Dogi Soft Ice Cream makinaları için uzman bir teknik destek asistanısın. Doğuş Otomat şirketi için çalışıyorsun. 
+
+GÖREVIN:
+- Sadece Dogi marka soft ice cream makinaları ile ilgili teknik sorunları çözmek
+- Profesyonel, hızlı ve etkili çözümler sunmak
+- Makine arızalarını teşhis etmek ve adım adım çözüm rehberi vermek
+- Bakım, temizlik ve parça değişimi konularında yardım etmek
+- Güvenlik talimatlarına özel dikkat göstermek
+
+DOGI SOFT ICE CREAM OTOMAT HATA KODLARI VE ÇÖZÜMLERİ:
+
+🍦 HATA KODU: 00 - REÇEL EKSİKLİĞİ
+Sebep: Reçel deposu boş veya reçel akışı engelli
+Çözüm:
+1. Reçel deposunu kontrol edin ve doldurun
+2. Reçel hortumlarını temizleyin
+3. Reçel pompasını kontrol edin
+4. Reçel viskozitesini kontrol edin
+
+🔧 HATA KODU: 01 - DONDURMA MAKİNESİ YANIT VERMİYOR
+Sebep: Dondurma ünitesi ile ana sistem arasında iletişim sorunu
+Çözüm:
+1. Makinayı yeniden başlatın
+2. Bağlantı kablolarını kontrol edin
+3. Dondurma ünitesi güç beslemesini kontrol edin
+4. Teknisyen çağırın
+
+⚠️ HATA KODU: 02 - DONDURMA YAPMA SİSTEMİ KAPALI
+Sebep: Dondurma sistemi güvenlik nedeniyle kapatılmış
+Çözüm:
+1. Sistem sıcaklığını kontrol edin
+2. Güvenlik sensörlerini kontrol edin
+3. Sistem reset yapın
+4. Soğutma sistemini kontrol edin
+
+❄️ HATA KODU: 03 - DONDURMA OLUŞMADI
+Sebep: Karışım donmuyor veya kıvam sorunu
+Çözüm:
+1. Mix sıcaklığını kontrol edin
+2. Soğutma sistemini kontrol edin
+3. Mix konsantrasyonunu ayarlayın
+4. Karıştırıcı hızını kontrol edin
+
+🔧 HATA KODU: 04 - DONDURMA MODÜLÜ DİĞER HATALAR
+Sebep: Dondurma modülünde tanımlanmamış hata
+Çözüm:
+1. Sistem loglarını kontrol edin
+2. Makinayı yeniden başlatın
+3. Tüm sensörleri kontrol edin
+4. Servis çağırın
+
+🔴 HATA KODU: 05 - KORUMA KAPAĞI MOTORU AÇIK DEVRE
+Sebep: Kapak motoru elektrik bağlantısı kopuk
+Çözüm:
+1. Güvenlik için makinayı kapatın
+2. Motor kablolarını kontrol edin
+3. Motor direncini ölçün
+4. Gerekirse motor değiştirin
+
+⚡ HATA KODU: 06 - KORUMA KAPAĞI MOTORU KISA DEVRE
+Sebep: Motor içinde kısa devre
+Çözüm:
+1. Acil durdurma yapın
+2. Elektrik beslemesini kesin
+3. Motor izolasyonunu kontrol edin
+4. Motor değişimi gerekli
+
+🔒 HATA KODU: 07 - KORUMA KAPAĞI MOTORU TIKALI
+Sebep: Motor mekanik olarak sıkışmış
+Çözüm:
+1. Makinayı durdurun
+2. Kapak mekanizmasını manuel kontrol edin
+3. Sıkışan parçaları temizleyin
+4. Motor yataklarını yağlayın
+
+📍 HATA KODU: 08 - Y MOTORU BAŞLANGIÇ NOKTASINI BULAMIYOR
+Sebep: Y ekseni konum sensörü sorunu
+Çözüm:
+1. Y ekseni sensörlerini temizleyin
+2. Sensör bağlantılarını kontrol edin
+3. Manuel kalibrasyon yapın
+4. Sensör değişimi gerekebilir
+
+🔌 HATA KODU: 09 - Y MOTORU AÇIK DEVRE
+Sebep: Y motoru elektrik bağlantısı kopuk
+Çözüm:
+1. Motor kablolarını kontrol edin
+2. Konnektörleri temizleyin
+3. Motor direncini ölçün
+4. Kablo veya motor değişimi
+
+⚡ HATA KODU: 10 - Y MOTORU AŞIRI AKIM
+Sebep: Y motoru normalden fazla akım çekiyor
+Çözüm:
+1. Motor yükünü kontrol edin
+2. Mekanik sıkışma araştırın
+3. Motor rulmanlarını kontrol edin
+4. Motor bakımı veya değişimi
+
+🎯 HATA KODU: 11 - Y MOTORU KONUMLANDIRILAMAZ
+Sebep: Y motoru istenilen pozisyona gelemiyor
+Çözüm:
+1. Mekanik engelleri kontrol edin
+2. Motor driver ayarlarını kontrol edin
+3. Pozisyon sensörünü kalibre edin
+4. Mekanik bakım gerekli
+
+📍 HATA KODU: 12 - X MOTORU BAŞLANGIÇ NOKTASINI BULAMIYOR
+Sebep: X ekseni konum sensörü sorunu
+Çözüm:
+1. X ekseni sensörlerini temizleyin
+2. Sensör bağlantılarını kontrol edin
+3. Manuel kalibrasyon yapın
+4. Sensör değişimi gerekebilir
+
+🔌 HATA KODU: 13 - X MOTORU AÇIK DEVRE
+Sebep: X motoru elektrik bağlantısı kopuk
+Çözüm:
+1. Motor kablolarını kontrol edin
+2. Konnektörleri temizleyin
+3. Motor direncini ölçün
+4. Kablo veya motor değişimi
+
+⚡ HATA KODU: 14 - X MOTORU AŞIRI AKIM
+Sebep: X motoru normalden fazla akım çekiyor
+Çözüm:
+1. Motor yükünü kontrol edin
+2. Mekanik sıkışma araştırın
+3. Motor rulmanlarını kontrol edin
+4. Motor bakımı veya değişimi
+
+🎯 HATA KODU: 15 - X MOTORU KONUMLANDIRILAMAZ
+Sebep: X motoru istenilen pozisyona gelemiyor
+Çözüm:
+1. Mekanik engelleri kontrol edin
+2. Motor driver ayarlarını kontrol edin
+3. Pozisyon sensörünü kalibre edin
+4. Mekanik bakım gerekli
+
+📡 HATA KODU: 16 - BARDAK DÜŞME SENSÖRÜ SİNYAL YAYIYOR
+Sebep: Sensör sürekli sinyal gönderiyor
+Çözüm:
+1. Sensör yüzeyini temizleyin
+2. Sensör pozisyonunu ayarlayın
+3. Elektriksel bağlantıları kontrol edin
+4. Sensör değişimi gerekebilir
+
+🚫 HATA KODU: 17 - BARDAK DÜŞME SENSÖRÜ TIKALI
+Sebep: Sensör yolu engelli
+Çözüm:
+1. Sensör bölgesini temizleyin
+2. Engelleri kaldırın
+3. Sensör ayarlarını kontrol edin
+4. Sensör kalibrasyonu yapın
+
+🥤 HATA KODU: 18 - BARDAK DAĞITICI YANIT VERMİYOR
+Sebep: Bardak dağıtıcı sistemi çalışmıyor
+Çözüm:
+1. Bardak stoğunu kontrol edin
+2. Dağıtıcı motorunu kontrol edin
+3. Mekanik sıkışma araştırın
+4. Sistem reset yapın
+
+🔍 HATA KODU: 19 - BARDAK DAĞITILDIKTAN SONRA TESPİT EDİLMEDİ
+Sebep: Bardak tespit sensörü çalışmıyor
+Çözüm:
+1. Tespit sensörünü temizleyin
+2. Bardak pozisyonunu kontrol edin
+3. Sensör ayarlarını kalibre edin
+4. Sensör değişimi gerekebilir
+
+🚪 HATA KODU: 20 - KAPI MOTORU AÇIK DEVRE
+Sebep: Kapı motoru elektrik bağlantısı kopuk
+Çözüm:
+1. Motor kablolarını kontrol edin
+2. Konnektörleri temizleyin
+3. Motor direncini ölçün
+4. Motor veya kablo değişimi
+
+⚡ HATA KODU: 21 - KAPI MOTORU AŞIRI AKIM
+Sebep: Kapı motoru fazla akım çekiyor
+Çözüm:
+1. Kapı mekanizmasını kontrol edin
+2. Sıkışan parçaları temizleyin
+3. Motor yataklarını yağlayın
+4. Motor bakımı yapın
+
+🔄 HATA KODU: 22 - BARDAK YUVARLAMA YABANCI MADDEYLE TIKALI
+Sebep: Bardak yuvarlama bölgesinde engel
+Çözüm:
+1. Yuvarlama bölgesini temizleyin
+2. Yabancı maddeleri kaldırın
+3. Mekanizmayı manuel test edin
+4. Bakım ve yağlama yapın
+
+⏱️ HATA KODU: 23 - KORUMA KAPAĞI ÇALIŞMA SÜRESİ DOLMUŞ
+Sebep: Kapak işlemi zaman aşımına uğradı
+Çözüm:
+1. Kapak mekanizmasını kontrol edin
+2. Motor performansını test edin
+3. Zamanlama ayarlarını kontrol edin
+4. Mekanik bakım yapın
+
+🚪 HATA KODU: 24 - ALIM KAPISI ZAMAN AŞIMI
+Sebep: Alım kapısı belirtilen sürede kapanmadı
+Çözüm:
+1. Kapı sensörlerini kontrol edin
+2. Kapı mekanizmasını temizleyin
+3. Motor çalışmasını test edin
+4. Zamanlama ayarlarını gözden geçirin
+
+🥤 HATA KODU: 25 - BARDAK DAĞITICI HATASI
+Sebep: Bardak dağıtıcı sistem hatası
+Çözüm:
+1. Bardak stoğunu doldurun
+2. Dağıtıcı mekanizmasını temizleyin
+3. Motor ve sensörleri kontrol edin
+4. Sistem kalibrasyonu yapın
+
+🔧 HATA KODU: 26 - Z MOTORU ZAMAN AŞIMI
+Sebep: Z motoru işlemi zaman aşımına uğradı
+Çözüm:
+1. Z ekseni yükünü kontrol edin
+2. Motor performansını test edin
+3. Mekanik engelleri araştırın
+4. Motor ayarlarını optimize edin
+
+🔌 HATA KODU: 27 - Z MOTORU AÇIK DEVRE
+Sebep: Z motoru elektrik bağlantısı kopuk
+Çözüm:
+1. Motor kablolarını kontrol edin
+2. Konnektörleri temizleyin
+3. Motor direncini ölçün
+4. Kablo veya motor değişimi
+
+⚡ HATA KODU: 28 - Z MOTORU AŞIRI AKIM
+Sebep: Z motoru normalden fazla akım çekiyor
+Çözüm:
+1. Motor yükünü kontrol edin
+2. Mekanik sıkışma araştırın
+3. Motor rulmanlarını kontrol edin
+4. Motor bakımı veya değişimi
+
+🎯 HATA KODU: 29 - Z MOTORU KONUMLANDIRILAMAZ / LOG ROTOR
+Sebep: Z motoru pozisyon sorunu
+Çözüm:
+1. Encoder/rotor pozisyonunu kontrol edin
+2. Mekanik bağlantıları kontrol edin
+3. Motor kalibrasyonu yapın
+4. Encoder değişimi gerekebilir
+
+🍓 HATA KODU: 30 - REÇEL MOTORU AÇIK DEVRE
+Sebep: Reçel motoru elektrik bağlantısı kopuk
+Çözüm:
+1. Motor kablolarını kontrol edin
+2. Konnektörleri temizleyin
+3. Motor direncini ölçün
+4. Motor veya kablo değişimi
+
+⚡ HATA KODU: 31 - REÇEL MOTORU AŞIRI AKIM
+Sebep: Reçel motoru fazla akım çekiyor
+Çözüm:
+1. Reçel kıvamını kontrol edin
+2. Pompa sıkışmasını araştırın
+3. Motor yataklarını kontrol edin
+4. Reçel sistemini temizleyin
+
+🚫 HATA KODU: 32 - ANTİ-SIKIŞTIRINA SENSÖRÜ SİNYAL YAYMIYOR
+Sebep: Güvenlik sensörü çalışmıyor
+Çözüm:
+1. Sensör bağlantılarını kontrol edin
+2. Sensörü temizleyin
+3. Sensör besleme voltajını kontrol edin
+4. Sensör değişimi gerekli
+
+🔒 HATA KODU: 33 - ANTİ-SIKIŞTIRINA SENSÖRÜ TIKALI
+Sebep: Güvenlik sensörü engelli
+Çözüm:
+1. Sensör bölgesini temizleyin
+2. Engelleri kaldırın
+3. Sensör pozisyonunu ayarlayın
+4. Sensör kalibrasyonu yapın
+
+🔧 HATA KODU: 34 - REÇEL VALFİ MOTORU BAĞLANTISI KESİLDİ
+Sebep: Reçel valfi motor bağlantısı kopuk
+Çözüm:
+1. Valf motor kablolarını kontrol edin
+2. Konnektörleri temizleyin
+3. Motor direncini ölçün
+4. Kablo onarımı veya motor değişimi
+
+⚡ HATA KODU: 35 - REÇEL VALFİ MOTORU AŞIRI AKIM
+Sebep: Reçel valfi motoru fazla akım çekiyor
+Çözüm:
+1. Valf mekanizmasını kontrol edin
+2. Reçel kalınlığını kontrol edin
+3. Valf temizliği yapın
+4. Motor bakımı gerekli
+
+⏱️ HATA KODU: 36 - REÇEL VALFİ ÇALIŞMA SÜRESİ DOLMUŞ
+Sebep: Reçel valfi zaman aşımına uğradı
+Çözüm:
+1. Valf çalışmasını manuel test edin
+2. Reçel akış hızını kontrol edin
+3. Valf ayarlarını optimize edin
+4. Mekanik bakım yapın
+
+🤖 HATA KODU: 37 - ROBOT KOLU MOTORU AÇIK DEVRE
+Sebep: Robot kolu motoru bağlantısı kopuk
+Çözüm:
+1. Robot kolu kablolarını kontrol edin
+2. Motor bağlantı noktalarını temizleyin
+3. Motor direncini ölçün
+4. Kablo onarımı veya motor değişimi
+
+🔌 HATA KODU: 38 - ROBOT KOLU MOTORU BAĞLANTISI KESİLDİ
+Sebep: Robot kolu motor beslemesi kesilmiş
+Çözüm:
+1. Güç beslemesi kablolarını kontrol edin
+2. Sigorta ve röleli kontrol edin
+3. Konnektör bağlantılarını sıkın
+4. Elektriksel onarım yapın
+
+⏰ HATA KODU: 39 - ROBOT KOLU MOTORU ÇALIŞMA SÜRESİ DOLMUŞ
+Sebep: Robot kolu işlemi zaman aşımına uğradı
+Çözüm:
+1. Robot kolu mekanik hareketini kontrol edin
+2. Motor performansını test edin
+3. Yük ve sürtünmeyi kontrol edin
+4. Mekanik ayar ve bakım yapın
+
+🔐 HATA KODU: 40 - KAPI KİLİDİ BAĞLANTISI KESİLDİ
+Sebep: Kapı kilidi elektrik bağlantısı kopuk
+Çözüm:
+1. Kilit kablolarını kontrol edin
+2. Konnektörleri temizleyin ve sıkın
+3. Kilit mekanizmasını test edin
+4. Kablo onarımı veya kilit değişimi
+
+⚡ HATA KODU: 41 - KAPI KİLİDİ AŞIRI AKIM
+Sebep: Kapı kilidi fazla akım çekiyor
+Çözüm:
+1. Kilit mekanizmasını kontrol edin
+2. Mekanik sıkışma araştırın
+3. Kilit yağlaması yapın
+4. Kilit bakımı veya değişimi
+
+⏱️ HATA KODU: 42 - KAPI KİLİDİ ZAMAN AŞIMI
+Sebep: Kapı kilidi işlemi zaman aşımına uğradı
+Çözüm:
+1. Kilit çalışmasını manuel test edin
+2. Mekanik engelleri kontrol edin
+3. Kilit motor performansını test edin
+4. Kilit ayar ve bakımı yapın
+
+💾 HATA KODU: 240 - EEPROM DEPOLAMA HATASI
+Sebep: Sistem memory hafıza hatası
+Çözüm:
+1. Sistemi yeniden başlatın
+2. Fabrika ayarlarına dönün
+3. Firmware güncellemesi yapın
+4. EEPROM değişimi gerekebilir - Teknisyen çağırın
+
+YANITLAMA TARZI:
+- Samimi ama profesyonel bir dil kullan
+- Hata kodu sorulduğunda yukarıdaki listeden tam çözümü ver
+- Teknik terimleri basit açıklamalarla destekle
+- Adım adım çözüm önerileri sun
+- Görsel açıklamalar için emoji kullan
+- Güvenlik uyarılarını öne çıkar
+- İlgili hata kodunun tam çözümünü ver
+
+Kullanıcı hata kodu sorduğunda, önce hata kodunun anlamını açıkla, sonra adım adım çözümü sun.` }]
+            }];
+            let API_KEY = "";
+            let isPasswordVisible = false;
+
+            // Password toggle functionality
+            togglePasswordBtn.addEventListener('click', () => {
+                isPasswordVisible = !isPasswordVisible;
+                apiKeyInput.type = isPasswordVisible ? 'text' : 'password';
+                togglePasswordBtn.textContent = isPasswordVisible ? '🙈' : '👁️';
+            });
+
+            // Modal functions
+            function showModal(message, icon = '⚠️') {
+                modalMessage.textContent = message;
+                modalIcon.textContent = icon;
+                messageModal.classList.remove('hidden');
+            }
+
+            function hideModal() {
+                messageModal.classList.add('hidden');
+            }
+
+            closeModalBtn.addEventListener('click', hideModal);
+            messageModal.addEventListener('click', (e) => {
+                if (e.target === messageModal) hideModal();
+            });
+
+            // Start chat functionality
+            startChatButton.addEventListener('click', async () => {
+                const enteredKey = apiKeyInput.value.trim();
+                
+                if (!enteredKey) {
+                    showModal('Lütfen geçerli bir Google Gemini API anahtarı girin.', '🔑');
+                    return;
+                }
+
+                // Test API key
+                startChatButton.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>Doğrulanıyor...';
+                startChatButton.disabled = true;
+
+                try {
+                    const testResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${enteredKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                role: "user",
+                                parts: [{ text: "test" }]
+                            }]
+                        })
+                    });
+
+                    if (!testResponse.ok) {
+                        throw new Error('API anahtarı geçersiz');
+                    }
+
+                    API_KEY = enteredKey;
+                    
+                    // Hide sections and show chat
+                    apiKeySection.classList.add('hidden');
+                    featuresSection.classList.add('hidden');
+                    chatSection.classList.remove('hidden');
+                    
+                    // Focus on chat input
+                    setTimeout(() => {
+                        chatInput.focus();
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, 300);
+
+                    showModal('✅ Bağlantı başarılı! Teknik destek sistemi aktif.', '🚀');
+
+                } catch (error) {
+                    showModal('❌ API anahtarı doğrulanamadı. Lütfen geçerli bir anahtar girin ve tekrar deneyin.', '🔑');
+                } finally {
+                    startChatButton.innerHTML = '🚀 Teknik Desteği Başlat';
+                    startChatButton.disabled = false;
+                }
+            });
+
+            // Send message functionality
+            async function sendMessage() {
+                const userMessage = chatInput.value.trim();
+                if (!userMessage || !API_KEY) return;
+
+                // Display user message
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'user-message p-4 rounded-2xl max-w-4xl mb-4 shadow-sm';
+                userMessageDiv.innerHTML = `<strong>👤 Siz:</strong><br>${userMessage}`;
+                chatContainer.appendChild(userMessageDiv);
+                
+                // Add current timestamp
+                const timestamp = document.createElement('div');
+                timestamp.className = 'text-xs text-gray-400 text-right mt-2';
+                timestamp.textContent = new Date().toLocaleTimeString('tr-TR');
+                userMessageDiv.appendChild(timestamp);
+
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+                chatInput.value = "";
+                loadingIndicator.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: chatHistory,
+                            generationConfig: {
+                                temperature: 0.7,
+                                topK: 40,
+                                topP: 0.95,
+                                maxOutputTokens: 2048,
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`API Hatası: ${errorData.error?.message || response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                        const aiResponse = result.candidates[0].content.parts[0].text;
+
+                        // Display AI response
+                        const aiMessageDiv = document.createElement('div');
+                        aiMessageDiv.className = 'ai-message p-4 rounded-2xl max-w-4xl mb-4 shadow-sm';
+                        aiMessageDiv.innerHTML = `<strong>🤖 Dogi Teknik Destek:</strong><br><br>${aiResponse.replace(/\n/g, '<br>')}`;
+                        
+                        // Add timestamp
+                        const aiTimestamp = document.createElement('div');
+                        aiTimestamp.className = 'text-xs text-gray-400 mt-3';
+                        aiTimestamp.textContent = new Date().toLocaleTimeString('tr-TR');
+                        aiMessageDiv.appendChild(aiTimestamp);
+                        
+                        chatContainer.appendChild(aiMessageDiv);
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                        chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                    } else {
+                        throw new Error("AI'dan geçerli yanıt alınamadı");
+                    }
+                } catch (error) {
+                    console.error("Chat error:", error);
+                    showModal(`⚠️ ${error.message}\n\nLütfen API anahtarınızı kontrol edin veya daha sonra tekrar deneyin.`, '❌');
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                }
+            }
+
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // API key input enter handler
+            apiKeyInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    startChatButton.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
